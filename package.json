@@ -55,7 +55,7 @@
     "registry": "https://npm.pkg.github.com/@iazlabs"
   },
   "dependencies": {
-    "@iazlabs/clone": "^0.1.1",
+    "@iazlabs/clone": "^0.1.2",
     "@iazlabs/utilities": "^0.1.2"
   }
 }
