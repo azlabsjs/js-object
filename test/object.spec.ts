@@ -1,4 +1,4 @@
-import { getObjectProperty, JSObject, setObjectProperty } from '../../js-utils/src/object';
+import { getObjectProperty, JSObject, setObjectProperty } from '../src';
 
 describe('JSObject utility test', () => {
   it('JSObject.isEmpty() should returns true for {} object and false for {lat: 3.08942, long: 1.8942}', () => {
