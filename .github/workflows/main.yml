@@ -31,7 +31,7 @@ jobs:
         run: npm -v
 
       - name: Removes yarn lock to force dependencies installation using npm
-        run: rm yarn.lock
+        run: rm -f yarn.lock
 
       - name: Install deps and build (with cache)
         uses: bahmutov/npm-install@v1
@@ -63,7 +63,7 @@ jobs:
         run: npm -v
 
       - name: Removes yarn lock to force dependencies installation using npm
-        run: rm yarn.lock
+        run: rm -f yarn.lock
 
       - name: Install deps and build (with cache)
         uses: bahmutov/npm-install@v1
