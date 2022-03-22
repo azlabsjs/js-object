@@ -31,7 +31,7 @@ export class JSObject extends Object {
    * @param value
    * @returns
    */
-  static isEmpty = <T extends any>(value: T) => isEmpty(value);
+  static isEmpty = <T>(value: T) => isEmpty(value);
 
   /**
    * Returns the default value passed by used if the value of the object is empty
@@ -40,7 +40,7 @@ export class JSObject extends Object {
    * @param default_
    * @returns
    */
-  static defaultIfEmpty = <T extends any>(value: T, default_: any = {}) =>
+  static defaultIfEmpty = <T>(value: T, default_: any = {}) =>
     !JSObject.isEmpty(value)
       ? value
       : typeof default_ === 'function'
@@ -86,12 +86,12 @@ export class JSObject extends Object {
    * @param value
    * @returns
    */
-  static setProperty = <T extends Object>(
+  static setProperty = <T extends object>(
     source: T | undefined,
     key: string,
     value?: any,
-    strict: boolean = false,
-    seperator: string = '.'
+    strict = false,
+    seperator = '.'
   ) => {
     if (key === '') {
       return source;
@@ -161,7 +161,7 @@ export class JSObject extends Object {
   static getProperty = <T extends { [prop: string]: any }>(
     source: T,
     key: string,
-    seperator: string = '.'
+    seperator = '.'
   ) => {
     if (key === '' || !JSObject.isDefined(key) || !JSObject.isDefined(source)) {
       return source ?? undefined;
@@ -169,7 +169,7 @@ export class JSObject extends Object {
     if (key.includes(seperator ?? '.')) {
       // Creates an array of inner properties
       const properties = key.split(seperator ?? '.');
-      let current = source;
+      const current = source;
       // Reduce the source object to a single value
       return properties.reduce((carry, prop) => {
         if (carry) {
@@ -191,14 +191,14 @@ export class JSObject extends Object {
    */
   static flatten = (
     source: { [index: string]: any },
-    prefix: boolean = true
+    prefix = true
   ) => {
     if (isPrimitive(source)) {
       return source;
     }
     const dst: { [index: string]: any } = {};
     for (const prop in source) {
-      if (!source.hasOwnProperty(prop)) {
+      if (!(prop in source)) {
         continue;
       }
       if (isPrimitive(source[prop]) || Array.isArray(source[prop])) {
@@ -206,7 +206,7 @@ export class JSObject extends Object {
       } else {
         const flatten = JSObject.flatten(source[prop], prefix);
         for (const propx in flatten) {
-          if (!flatten.hasOwnProperty(propx)) {
+          if (!(propx in flatten)) {
             continue;
           }
           const key = prefix ? prop + '.' + propx : propx;
@@ -217,9 +217,9 @@ export class JSObject extends Object {
     return dst;
   };
 
-  private static setProperty_ = (object_: Object, prop: string, value: any) => {
+  private static setProperty_ = (object_: object, prop: string, value: any) => {
     // TODO : Get default object descriptors
-    let descriptors = Object.getOwnPropertyDescriptor(object_, prop) ?? {};
+    const descriptors = Object.getOwnPropertyDescriptor(object_, prop) ?? {};
     // Modify object applying overriding my descriptors with the defaults
     Object.defineProperty(object_, prop, {
       // TODO : Use default if no previous descriptor
