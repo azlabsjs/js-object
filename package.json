@@ -1,6 +1,6 @@
 {
-  "name": "@iazlabs/js-object",
-  "version": "0.1.1",
+  "name": "@azlabsjs/js-object",
+  "version": "0.1.9",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/types/index.d.ts",
@@ -49,11 +49,13 @@
       "limit": "10 KB"
     }
   ],
+  "dependencies": {
+    "@azlabsjs/clone": "^0.1.10"
+  },
   "devDependencies": {
     "@betterer/cli": "^5.1.6",
     "@betterer/typescript": "^5.1.6",
-    "@iazlabs/clone": "^0.1.3",
-    "@iazlabs/ts-build": "^0.1.6",
+    "@azlabsjs/ts-build": "^0.1.6",
     "@size-limit/preset-small-lib": "^7.0.8",
     "@types/jest": "^27.4.1",
     "@typescript-eslint/eslint-plugin": "^5.12.1",
@@ -68,9 +70,10 @@
     "typescript": "^4.5.5"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/@iazlabs"
+    "registry": "https://npm.pkg.github.com/@azlabsjs"
   },
-  "peerDependencies": {
-    "@iazlabs/clone": "^0.1.3"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/azlabsjs/js-object.git"
   }
 }

@@ -1,5 +1,5 @@
-import { clone, cloneDeep } from '@iazlabs/clone';
-import { isDefined, isEmpty, isObject, isPrimitive } from '@iazlabs/utilities';
+import { clone, cloneDeep } from '@azlabsjs/clone';
+import { isDefined, isEmpty, isObject, isPrimitive } from '@azlabsjs/utilities';
 
 /**
  * Global functional interface for getting proprety value of a JS object
