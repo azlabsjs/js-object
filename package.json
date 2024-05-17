@@ -3,6 +3,7 @@
   "version": "0.1.11",
   "license": "MIT",
   "main": "dist/index.js",
+  "types": "dist/types/index.d.ts",
   "typings": "dist/types/index.d.ts",
   "files": [
     "dist/**/*"
@@ -15,9 +16,7 @@
     "lint": "ts-build lint",
     "prepare": "git config core.hookspath .githooks && ts-build build",
     "size": "size-limit",
-    "analyze": "size-limit --why",
-    "test": "jest",
-    "betterer": "betterer --strict"
+    "test": "jest"
   },
   "husky": {
     "hooks": {
@@ -32,9 +31,14 @@
   },
   "exports": {
     ".": {
-      "import": "./dist/esm/index.mjs",
-      "require": "./dist/cjs/index.cjs",
-      "default": "./dist/cjs/index.cjs"
+      "import": {
+        "types": "./dist/types/index.d.mts",
+        "default": "./dist/esm/index.mjs"
+      },
+      "require": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/cjs/index.cjs"
+      }
     }
   },
   "author": "azandrew-sidoine",
@@ -53,9 +57,7 @@
     "@azlabsjs/clone": "^0.1.10"
   },
   "devDependencies": {
-    "@betterer/cli": "^5.1.6",
-    "@betterer/typescript": "^5.1.6",
-    "@azlabsjs/ts-build": "^0.1.16",
+    "@azlabsjs/ts-build": "^0.4.21",
     "@size-limit/preset-small-lib": "^7.0.8",
     "@types/jest": "^27.4.1",
     "@typescript-eslint/eslint-plugin": "^5.12.1",
