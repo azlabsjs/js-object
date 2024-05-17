@@ -2,7 +2,9 @@
   "name": "@azlabsjs/js-object",
   "version": "0.2.2",
   "license": "MIT",
+  "author": "azandrew-sidoine",
   "main": "dist/index.js",
+  "module": "dist/esm/index.mjs",
   "types": "dist/types/index.d.ts",
   "typings": "dist/types/index.d.ts",
   "files": [
@@ -41,8 +43,6 @@
       }
     }
   },
-  "author": "azandrew-sidoine",
-  "module": "dist/esm/index.mjs",
   "size-limit": [
     {
       "path": "dist/cjs/index.cjs",
