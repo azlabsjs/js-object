@@ -54,11 +54,11 @@
     }
   ],
   "dependencies": {
-    "@azlabsjs/clone": "^0.1.10"
+    "@azlabsjs/clone": "^0.2.0"
   },
   "devDependencies": {
     "@azlabsjs/ts-build": "^0.4.21",
-    "@size-limit/preset-small-lib": "^7.0.8",
+    "@size-limit/preset-small-lib": "^11.1.4",
     "@types/jest": "^27.4.1",
     "@typescript-eslint/eslint-plugin": "^5.12.1",
     "@typescript-eslint/parser": "^5.12.1",
