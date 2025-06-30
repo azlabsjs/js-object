@@ -1,98 +1,67 @@
 import { clone, cloneDeep } from '@azlabsjs/clone';
 import { isDefined, isEmpty, isObject, isPrimitive } from '@azlabsjs/utilities';
 
-/**
- * Global functional interface for getting proprety value of a JS object
- * @param value
- * @param key
- * @returns
- */
-export const getObjectProperty = (value: object | any, key: string) =>
-  JSObject.getProperty(value, key);
+/** @description global functional interface for getting proprety value of a JS object */
+export function getObjectProperty<
+  T extends { [k: string | symbol]: unknown } | null | undefined = {
+    [k: string | symbol]: unknown;
+  },
+>(value: T, key: string | symbol) {
+  return JSObject.getProperty(value, key);
+}
 
-/**
- * Global functional interface for setting proprety value of a JS object
- *
- * @param source
- * @param key
- * @param value
- * @returns
- */
-export const setObjectProperty = (
-  source: object | any,
-  key: string,
-  value?: any
-) => JSObject.setProperty(source, key, value);
+/** @description Global functional interface for setting proprety value of a JS object */
+export function setObjectProperty<
+  T extends { [k: string | symbol]: unknown } | null | undefined = {
+    [k: string | symbol]: unknown;
+  },
+>(source: T, key: string, value?: unknown): T {
+  return JSObject.setProperty(source, key, value);
+}
 
-export class JSObject extends Object {
-  /**
-   * Returns true if the object is empty
-   *
-   * @param value
-   * @returns
-   */
+export class JSObject {
+  /** returns true if the object is empty */
   static isEmpty = <T>(value: T) => isEmpty(value);
 
-  /**
-   * Returns the default value passed by used if the value of the object is empty
-   *
-   * @param value
-   * @param default_
-   * @returns
-   */
-  static defaultIfEmpty = <T>(value: T, default_: any = {}) =>
-    !JSObject.isEmpty(value)
+  /** returns the default value passed by used if the value of the object is empty */
+  static defaultIfEmpty<T>(value: T, def: T | ((...args: unknown[]) => T)) {
+    return !JSObject.isEmpty(value)
       ? value
-      : typeof default_ === 'function'
-      ? default_()
-      : default_;
+      : typeof def === 'function'
+        ? (def as (...args: unknown[]) => T)()
+        : def;
+  }
 
-  /**
-   * Creates a deep copy of the given object
-   *
-   * @param value
-   * @returns
-   */
-  static cloneDeep = <T extends { [index: string]: any }>(value: T) =>
-    cloneDeep(value);
+  /** creates a deep copy of the given object */
+  static cloneDeep<T extends { [index: string]: unknown }>(value: T) {
+    return cloneDeep(value);
+  }
 
-  /**
-   * Compute a copy by decomposition on a Javascript object
-   *
-   * @param source
-   * @returns
-   */
-  static clone = <T>(source: T) => clone(source) as T;
+  /** compute a copy by decomposition on a javascript object */
+  static clone<T>(source: T) {
+    return clone(source) as T;
+  }
 
-  /**
-   * Check if the value of the object is not equals to null or undefined
-   *
-   * @param value
-   */
-  static isDefined = (value: any) => isDefined(value);
+  /** check if the value of the object is not equals to null or undefined */
+  static isDefined(value: unknown) {
+    return isDefined(value);
+  }
 
-  /**
-   * Check if value is an instance of Javascript object
-   * @param value
-   * @returns
-   */
-  static isJsObject = (value: any) => isObject(value);
+  /** check if value is an instance of Javascript object */
+  static isJsObject(value: unknown) {
+    return isObject(value);
+  }
 
-  /**
-   * Set property value of a JS Object
-   *
-   * @param source
-   * @param key
-   * @param value
-   * @returns
-   */
-  static setProperty = <T extends object>(
-    source: T | undefined,
+  /** set property value of a JS Object */
+  static setProperty<
+    T extends { [k: string | symbol]: unknown } | null | undefined,
+  >(
+    source: T,
     key: string,
-    value?: any,
+    value?: unknown,
     strict = false,
     seperator = '.'
-  ) => {
+  ): T {
     if (key === '') {
       return source;
     }
@@ -105,13 +74,12 @@ export class JSObject extends Object {
     if (key.includes(seperator ?? '.')) {
       // Creates an array of inner properties
       const properties = key.split(seperator ?? '.');
-      // TODO : Point the reference to the object
-      let ref: any = source;
+      let ref: typeof source = source;
       while (properties.length > 1) {
         const prop = properties.shift();
         if (
-          (prop && !JSObject.isDefined(ref[prop])) ||
-          (prop && !JSObject.isJsObject(ref[prop]))
+          (prop && !JSObject.isDefined(ref[prop as keyof typeof ref])) ||
+          (prop && !JSObject.isJsObject(ref[prop as keyof typeof ref]))
         ) {
           if (strict) {
             throw new Error(
@@ -120,14 +88,11 @@ export class JSObject extends Object {
               )}`
             );
           }
-          // TODO : Point the reference to an empty object
-          // ref[prop] = {};
-          JSObject.setProperty_(ref, prop, {});
+          JSObject.setPropertyValue(ref, prop, {});
         }
         if (prop) {
-          // TODO : Point the reference to the inner object attached to the property
           // Use a cleaner getter
-          ref = ref[prop];
+          ref = ref[prop as keyof typeof ref] as typeof ref;
         }
       }
       const prop = properties.shift() ?? '';
@@ -137,7 +102,7 @@ export class JSObject extends Object {
             `Property ${prop} does not exists in object: ${JSON.stringify(ref)}`
           );
         }
-        JSObject.setProperty_(ref, prop, value ?? undefined);
+        JSObject.setPropertyValue(ref, prop, value ?? undefined);
       }
     } else {
       if (!(key in source) && strict) {
@@ -147,56 +112,56 @@ export class JSObject extends Object {
           )}`
         );
       }
-      JSObject.setProperty_(source, key, value ?? undefined);
+      JSObject.setPropertyValue(source, key, value ?? undefined);
     }
-    return source;
-  };
 
-  /**
-   * @description Get property from a JS obecjt. The function dynamically load property that are inner property
-   * of the given object.
-   * @param source [[object]]
-   * @param key [[string]]
-   */
-  static getProperty = <T extends { [prop: string]: any }>(
+    return source;
+  }
+
+  /** @description get property from a JS obecjt. The function dynamically load property that are inner property */
+  static getProperty = <
+    T extends { [prop: string | symbol]: unknown } | null | undefined,
+  >(
     source: T,
-    key: string,
+    key: string | symbol,
     seperator = '.'
   ) => {
-    if (key === '' || !JSObject.isDefined(key) || !JSObject.isDefined(source)) {
+    if (typeof source === 'undefined' || source === null) {
+      return source;
+    }
+
+    if (key === '' || !JSObject.isDefined(key)) {
       return source ?? undefined;
     }
-    if (key.includes(seperator ?? '.')) {
+
+    if (typeof key === 'string' && key.includes(seperator ?? '.')) {
       // Creates an array of inner properties
       const properties = key.split(seperator ?? '.');
       const current = source;
       // Reduce the source object to a single value
       return properties.reduce((carry, prop) => {
         if (carry) {
-          carry =
+          carry = (
             JSObject.isJsObject(current) && carry[prop]
-              ? carry[prop] ?? undefined
-              : undefined;
+              ? (carry[prop] ?? undefined)
+              : undefined
+          ) as T;
         }
         return carry;
-      }, source);
+      }, source as T);
     } else {
       return source ? source[key] : undefined;
     }
   };
 
-  /**
-   * @description Helper function for flattening an object properties
-   * @param source [[object]]
-   */
-  static flatten = (
-    source: { [index: string]: any },
-    prefix = true
-  ) => {
+  /** @description helper function for flattening an object properties */
+  static flatten<
+    T extends { [index: string]: unknown } = { [index: string]: unknown },
+  >(source: T, prefix = true) {
     if (isPrimitive(source)) {
       return source;
     }
-    const dst: { [index: string]: any } = {};
+    let dst: typeof source = {} as T;
     for (const prop in source) {
       if (!(prop in source)) {
         continue;
@@ -204,25 +169,27 @@ export class JSObject extends Object {
       if (isPrimitive(source[prop]) || Array.isArray(source[prop])) {
         dst[prop] = source[prop];
       } else {
-        const flatten = JSObject.flatten(source[prop], prefix);
+        const flatten = JSObject.flatten(source[prop] as typeof source, prefix);
         for (const propx in flatten) {
           if (!(propx in flatten)) {
             continue;
           }
           const key = prefix ? prop + '.' + propx : propx;
-          dst[key] = flatten[propx];
+          dst = Object.assign(dst, { [key]: flatten[propx] });
         }
       }
     }
     return dst;
-  };
+  }
 
-  private static setProperty_ = (object_: object, prop: string, value: any) => {
-    // TODO : Get default object descriptors
+  private static setPropertyValue = (
+    object_: object,
+    prop: string,
+    value: unknown
+  ) => {
     const descriptors = Object.getOwnPropertyDescriptor(object_, prop) ?? {};
-    // Modify object applying overriding my descriptors with the defaults
+
     Object.defineProperty(object_, prop, {
-      // TODO : Use default if no previous descriptor
       ...{
         writable: true,
         configurable: true,
@@ -230,7 +197,6 @@ export class JSObject extends Object {
       },
       // Build with old descriptors by decomposition
       ...descriptors,
-      // TODO : Modify the value
       value: value,
     });
   };

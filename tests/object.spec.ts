@@ -106,4 +106,9 @@ describe('JSObject utility test', () => {
       'address.coord.long': 1.8942,
     });
   });
+
+  it('returns JSObject.getProperty() `undefined` if source value is `undefined` or `null` if source value is `null` ', () => {
+    expect(JSObject.getProperty(null, '')).toEqual(null);
+    expect(JSObject.getProperty(undefined, '')).toEqual(undefined);
+  });
 });
